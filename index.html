@@ -1029,8 +1029,18 @@ function mapCustomRanking(r, rankCats){
 // ══════════════════════════════════════════════════════════════
 async function loadAll(){
   showLoading(true);
-  // segurança: força esconder após 10s
-  const safetyTimer = setTimeout(()=>{ showLoading(false); showError('Tempo esgotado. Verifique a conexão.'); }, 10000);
+
+  // Teste rápido de conectividade antes de tudo
+  try {
+    const ping = await sb.from('season').select('id').limit(1);
+    if(ping.error) throw ping.error;
+  } catch(e){
+    showLoading(false);
+    console.error('Ping failed:', e);
+    showErrorWithRetry('Sem conexão com o banco. ' + (e.message||''));
+    return;
+  }
+
   try {
     const [se, ca, pl, cr, rc, to, th, ctp] = await Promise.all([
       sb.from('season').select('*').limit(1),
@@ -1042,7 +1052,6 @@ async function loadAll(){
       sb.from('tournament_history').select('*').order('created_at'),
       sb.from('player_category_pts').select('*'),
     ]);
-    clearTimeout(safetyTimer);
     [se,ca,pl,cr,rc,to,th,ctp].forEach(r=>{ if(r.error) throw r.error; });
 
     if(se.data&&se.data[0]){
@@ -1053,7 +1062,6 @@ async function loadAll(){
     DB.customRankings = (cr.data||[]).map(r=>mapCustomRanking(r, rc.data||[]));
     DB.tournaments    = (to.data||[]).map(mapTournament);
 
-    // Enrich players with catPts and history
     (ctp.data||[]).forEach(row=>{
       const p = DB.players.find(x=>x.id===row.player_id);
       if(p) p.catPts[row.category_id] = row.pts;
@@ -1070,11 +1078,37 @@ async function loadAll(){
     updateBadges();
     renderRankingAbsoluto();
   } catch(e){
-    clearTimeout(safetyTimer);
     showLoading(false);
     console.error('loadAll error:', e);
-    showError('Erro ao conectar: ' + (e.message||JSON.stringify(e)));
+    showErrorWithRetry('Erro ao carregar dados: ' + (e.message||JSON.stringify(e)));
   }
+}
+
+function showErrorWithRetry(msg){
+  // Remove banner anterior
+  const old = document.getElementById('conn-error-overlay');
+  if(old) old.remove();
+
+  const div = document.createElement('div');
+  div.id = 'conn-error-overlay';
+  div.style.cssText = 'position:fixed;inset:0;z-index:8999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:32px;text-align:center';
+  div.innerHTML = `
+    <div style="font-size:40px">⚠️</div>
+    <div style="font-family:var(--display);font-size:28px;color:var(--red)">ERRO DE CONEXÃO</div>
+    <div style="font-size:13px;color:var(--text3);max-width:340px;line-height:1.6">${msg}</div>
+    <div style="font-size:12px;color:var(--text3);max-width:380px;line-height:1.8;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px">
+      <strong style="color:var(--text2);display:block;margin-bottom:6px">Possíveis causas:</strong>
+      • VPN ou firewall bloqueando supabase.co<br>
+      • Antivírus bloqueando a requisição<br>
+      • Rede da escola/empresa com restrições<br>
+      • Extensão do navegador (ex: ad blocker)
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+      <button onclick="document.getElementById('conn-error-overlay').remove();loadAll()" class="btn btn-primary">🔄 Tentar novamente</button>
+      <button onclick="window.open('https://jokupqvisqkjymjzsxsv.supabase.co','_blank')" class="btn btn-ghost">🔗 Testar conexão direta</button>
+    </div>
+  `;
+  document.body.appendChild(div);
 }
 
 // ══════════════════════════════════════════════════════════════
