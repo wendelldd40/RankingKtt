@@ -571,11 +571,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font
         <div class="radio-option" data-val="pino" onclick="selectRadio('np-bh-group',this)">Pino</div>
         <div class="radio-option" data-val="antispin" onclick="selectRadio('np-bh-group',this)">Anti-Spin</div>
       </div>
-    </div>
       <div id="np-pts-section" style="display:none">
         <div class="divider"></div>
         <div class="section-title">Pontuação Manual</div>
-        <div style="background:rgba(255,60,80,.06);border:1px solid rgba(255,60,80,.15);border-radius:var(--r);padding:14px;margin-bottom:4px">
+        <div style="background:rgba(255,60,80,.06);border:1px solid rgba(255,60,80,.15);border-radius:var(--r);padding:14px">
           <div style="font-size:11px;color:var(--text3);margin-bottom:12px">Edite diretamente os dados do jogador no ranking.</div>
           <div class="form-grid cols3">
             <div class="field"><label>Pontos Totais</label><input type="number" id="np-pts" value="0" min="0"></div>
@@ -587,7 +586,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('modal-new-player')">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveNewPlayer()">Salvar Jogador</button>
+      <button class="btn btn-primary" id="btn-save-player" onclick="saveNewPlayer()">Salvar Jogador</button>
     </div>
   </div>
 </div>
@@ -904,13 +903,16 @@ function navRanking(id){
 //  MODAL
 // ══════════════════════════════════════════════════════════════
 function openModal(id){
-  if(id==='modal-new-player')    prepNewPlayerModal();
+  if(id==='modal-new-player' && !editingPlayerId) prepNewPlayerModal();
   if(id==='modal-new-tournament') prepNewTournamentModal();
   if(id==='modal-new-category')  prepNewCategoryModal();
   if(id==='modal-new-ranking')   prepNewRankingModal();
   document.getElementById(id).classList.add('open');
 }
-function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function closeModal(id){
+  document.getElementById(id).classList.remove('open');
+  if(id==='modal-new-player'){ editingPlayerId=null; tmpAvatar=null; }
+}
 document.querySelectorAll('.modal-overlay').forEach(o=>{
   o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); });
 });
@@ -945,6 +947,9 @@ function prepNewPlayerModal(){
   document.getElementById('np-pts').value=0;
   document.getElementById('np-wins').value=0;
   document.getElementById('np-losses').value=0;
+  // reset título e botão
+  document.querySelector('#modal-new-player .modal-title').innerHTML='Novo <span class="text-red">Jogador</span>';
+  document.getElementById('btn-save-player').textContent='Salvar Jogador';
   ['np-grip-group','np-fh-group','np-bh-group'].forEach(g=>{
     document.querySelectorAll('#'+g+' .radio-option').forEach((o,i)=>o.classList.toggle('selected',i===0));
   });
@@ -996,9 +1001,13 @@ function editPlayer(id){
   document.getElementById('np-pts').value=p.pts||0;
   document.getElementById('np-wins').value=p.wins||0;
   document.getElementById('np-losses').value=p.losses||0;
+  // atualiza título e botão para modo edição
+  document.querySelector('#modal-new-player .modal-title').innerHTML=`Editar <span class="text-red">Jogador</span>`;
+  document.getElementById('btn-save-player').textContent='Atualizar Jogador';
   function sr(g,v){ document.querySelectorAll('#'+g+' .radio-option').forEach(o=>o.classList.toggle('selected',o.dataset.val===v)); }
   sr('np-grip-group',p.grip); sr('np-fh-group',p.fh); sr('np-bh-group',p.bh);
-  openModal('modal-new-player');
+  // NÃO chama openModal aqui — chama diretamente para não resetar
+  document.getElementById('modal-new-player').classList.add('open');
 }
 async function deletePlayer(id){
   if(!confirm('Remover jogador?')) return;
