@@ -714,6 +714,18 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font
   <div class="modal modal-md">
     <div class="modal-header">
       <div class="modal-title">Perfil do <span class="text-red">Jogador</span></div>
+      <button class="modal-close" onclick="closeModal('modal-player-profile')">&#x2715;</button>
+    </div>
+    <div class="modal-body" id="profile-body" style="padding:0"></div>
+  </div>
+</div>
+
+<div id="loading-overlay" style="position:fixed;inset:0;z-index:9000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .4s">
+  <div style="width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite"></div>
+  <div style="font-family:var(--cond);font-size:16px;font-weight:700;color:var(--text3);letter-spacing:2px;text-transform:uppercase">Carregando KTT Irece...</div>
+</div>
+<div id="error-banner" style="display:none;position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#1a0a0a;border:1px solid rgba(255,60,80,.4);border-radius:10px;padding:12px 20px;font-size:13px;color:var(--red);z-index:5000;box-shadow:0 4px 20px rgba(255,60,80,.2);max-width:500px;text-align:center"></div>
+<div id="toast" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none"></div>
 
 <script>
 // ══════════════════════════════════════════════════════════════
