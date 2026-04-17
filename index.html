@@ -326,8 +326,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font
 .text-red{color:var(--red)}.text-gold{color:var(--gold)}.text-green{color:var(--green)}.text-muted{color:var(--text3)}
 .flex{display:flex}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-8{gap:8px}
 /* ── LOADING OVERLAY ── */
-#loading-overlay{position:fixed;inset:0;z-index:9000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .4s}
-#loading-overlay.hidden{opacity:0;pointer-events:none}
+#loading-overlay{position:fixed;inset:0;z-index:9000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .3s}
+#loading-overlay.hidden{opacity:0;pointer-events:none;display:none}
 .loading-spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{font-family:var(--cond);font-size:16px;font-weight:700;color:var(--text3);letter-spacing:2px;text-transform:uppercase}
@@ -730,7 +730,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font
   </div>
 </div>
 
-<div id="loading-overlay" style="position:fixed;inset:0;z-index:9000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .4s">
+<div id="loading-overlay" style="position:fixed;inset:0;z-index:9000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .3s">
   <div style="width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite"></div>
   <div style="font-family:var(--cond);font-size:16px;font-weight:700;color:var(--text3);letter-spacing:2px;text-transform:uppercase">Carregando KTT Irece...</div>
 </div>
@@ -769,8 +769,14 @@ let pendingScore         = null;
 // ══════════════════════════════════════════════════════════════
 function showLoading(on){
   const el = document.getElementById('loading-overlay');
-  if(on) el.classList.remove('hidden');
-  else   el.classList.add('hidden');
+  if(!el) return;
+  if(on){
+    el.style.display='flex';
+    el.classList.remove('hidden');
+  } else {
+    el.classList.add('hidden');
+    el.style.display='none';
+  }
 }
 function showError(msg){
   const el = document.getElementById('error-banner');
@@ -824,6 +830,8 @@ function mapCustomRanking(r, rankCats){
 // ══════════════════════════════════════════════════════════════
 async function loadAll(){
   showLoading(true);
+  // segurança: força esconder após 10s
+  const safetyTimer = setTimeout(()=>{ showLoading(false); showError('Tempo esgotado. Verifique a conexão.'); }, 10000);
   try {
     const [se, ca, pl, cr, rc, to, th, ctp] = await Promise.all([
       sb.from('season').select('*').limit(1),
@@ -835,6 +843,7 @@ async function loadAll(){
       sb.from('tournament_history').select('*').order('created_at'),
       sb.from('player_category_pts').select('*'),
     ]);
+    clearTimeout(safetyTimer);
     [se,ca,pl,cr,rc,to,th,ctp].forEach(r=>{ if(r.error) throw r.error; });
 
     if(se.data&&se.data[0]){
@@ -862,9 +871,10 @@ async function loadAll(){
     updateBadges();
     renderRankingAbsoluto();
   } catch(e){
+    clearTimeout(safetyTimer);
     showLoading(false);
-    console.error(e);
-    showError('Erro ao conectar ao banco: ' + e.message);
+    console.error('loadAll error:', e);
+    showError('Erro ao conectar: ' + (e.message||JSON.stringify(e)));
   }
 }
 
