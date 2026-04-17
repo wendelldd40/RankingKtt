@@ -332,6 +332,181 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{font-family:var(--cond);font-size:16px;font-weight:700;color:var(--text3);letter-spacing:2px;text-transform:uppercase}
 .error-banner{display:none;position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#1a0a0a;border:1px solid rgba(255,60,80,.4);border-radius:var(--r);padding:12px 20px;font-size:13px;color:var(--red);z-index:500;box-shadow:0 4px 20px rgba(255,60,80,.2);max-width:500px;text-align:center}
+
+/* ══════════════════════════════════════════════════
+   MOBILE RESPONSIVE — breakpoint 768px
+══════════════════════════════════════════════════ */
+
+/* ── Bottom nav mobile ── */
+#bottom-nav{display:none}
+
+@media(max-width:768px){
+
+  /* ── Variáveis mobile ── */
+  :root{
+    --top:52px;
+    --side:0px;
+    --bottom-nav:58px;
+  }
+
+  body{overflow:hidden}
+
+  /* ── Topbar mobile ── */
+  #topbar{padding:0 14px;gap:8px}
+  .tb-subtitle{display:none}
+  .tb-name{font-size:18px}
+  .tb-logo{width:32px;height:32px;font-size:15px}
+  .tb-season{display:none}
+  .tb-sep{display:none}
+  .tb-chip span:not(.live-dot){display:none}
+  .tb-chip{padding:6px 10px;font-size:0}
+  .tb-chip svg{width:15px;height:15px;margin:0}
+
+  /* ── Sidebar — esconde no mobile ── */
+  #sidebar{display:none}
+
+  /* ── Main — ocupa tudo, padding bottom para bottom nav ── */
+  #main{
+    left:0;
+    padding:16px 14px calc(var(--bottom-nav) + 16px) 14px;
+  }
+
+  /* ── Bottom Nav ── */
+  #bottom-nav{
+    display:flex;
+    position:fixed;
+    bottom:0;left:0;right:0;
+    height:var(--bottom-nav);
+    z-index:300;
+    background:rgba(8,8,15,.97);
+    backdrop-filter:blur(20px);
+    border-top:1px solid var(--border);
+    align-items:stretch;
+  }
+  .bn-item{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:4px;cursor:pointer;transition:.15s;
+    border:none;background:none;color:var(--text3);font-family:var(--font);
+    font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+    padding:6px 4px;position:relative;
+  }
+  .bn-item:active{background:rgba(255,60,80,.08)}
+  .bn-item.active{color:var(--red)}
+  .bn-item.active::before{
+    content:'';position:absolute;top:0;left:20%;right:20%;
+    height:2px;background:var(--red);border-radius:0 0 3px 3px;
+    box-shadow:0 0 8px var(--red-glow);
+  }
+  .bn-item svg{width:20px;height:20px;stroke-width:1.8}
+  .bn-badge{
+    position:absolute;top:6px;right:calc(50% - 18px);
+    background:var(--red);color:#fff;border-radius:99px;
+    font-size:8px;font-weight:800;padding:1px 5px;min-width:14px;text-align:center;
+  }
+
+  /* ── Page header ── */
+  .page-header{flex-direction:column;gap:10px;margin-bottom:16px}
+  .page-title{font-size:28px}
+  .page-actions{width:100%;justify-content:flex-end}
+
+  /* ── Stats row ── */
+  .stats-row{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+  .stat-val{font-size:28px}
+
+  /* ── Ranking table — simplifica colunas ── */
+  .ranking-head{
+    grid-template-columns:44px 1fr 72px 56px !important;
+    padding:8px 12px;
+  }
+  .ranking-row{
+    grid-template-columns:44px 1fr 72px 56px !important;
+    padding:10px 12px;
+  }
+  /* esconde colunas extras no mobile */
+  .ranking-head > div:nth-child(4),
+  .ranking-head > div:nth-child(5),
+  .ranking-head > div:nth-child(6),
+  .ranking-head > div:nth-child(8),
+  .ranking-row > div:nth-child(4),
+  .ranking-row > div:nth-child(5),
+  .ranking-row > div:nth-child(6),
+  .ranking-row > div:nth-child(8){display:none}
+  .rk-pts{font-size:17px}
+  .rk-pos{font-size:16px}
+  .rk-name{font-size:13px}
+  .rk-avatar{width:34px;height:34px;border-radius:7px}
+
+  /* ── Players grid — 1 coluna ── */
+  .players-grid{grid-template-columns:1fr}
+
+  /* ── Tournaments grid — 1 coluna ── */
+  .tournaments-grid{grid-template-columns:1fr}
+
+  /* ── Modais — fullscreen no mobile ── */
+  .modal-overlay{padding:0;align-items:flex-end}
+  .modal{
+    border-radius:20px 20px 0 0 !important;
+    max-width:100% !important;
+    max-height:92vh;
+  }
+  .modal-header{padding:18px 20px 14px}
+  .modal-title{font-size:22px}
+  .modal-body{padding:16px 20px}
+  .modal-footer{padding:14px 20px;gap:8px}
+  .modal-footer .btn{flex:1;justify-content:center}
+
+  /* ── Perfil modal ── */
+  #modal-player-profile .modal{border-radius:20px 20px 0 0 !important}
+
+  /* ── Formulários — 1 coluna no mobile ── */
+  .form-grid{grid-template-columns:1fr !important}
+  .form-grid.cols3{grid-template-columns:1fr 1fr !important}
+  .form-full{grid-column:1/-1}
+
+  /* ── Profile stats ── */
+  .profile-stats-grid{grid-template-columns:repeat(2,1fr)}
+  .profile-stat-val{font-size:22px}
+
+  /* ── Bracket scroll ── */
+  .bracket-scroll{overflow-x:auto}
+  .br-round{min-width:130px}
+
+  /* ── Group table ── */
+  .group-table th,.group-table td{padding:7px 8px;font-size:12px}
+
+  /* ── Seção de categorias ── */
+  #categories-grid{grid-template-columns:1fr !important}
+
+  /* ── Custom rankings sidebar cats ── */
+  .crv-cat-info{flex-wrap:wrap}
+
+  /* ── Btn sizes ── */
+  .btn{padding:9px 14px;font-size:11px}
+  .btn-sm{padding:7px 10px;font-size:10px}
+
+  /* ── Toast — centralizado em baixo ── */
+  #toast{
+    bottom:calc(var(--bottom-nav) + 12px);
+    right:14px;left:14px;
+  }
+  .toast-item{min-width:unset;width:100%}
+
+  /* ── Error banner ── */
+  #error-banner{
+    top:calc(var(--top) + 8px);
+    left:14px;right:14px;
+    transform:none;max-width:none;
+  }
+}
+
+/* ── Tablet 769-1024px ── */
+@media(min-width:769px) and (max-width:1024px){
+  :root{--side:200px}
+  #main{padding:18px}
+  .ranking-head{grid-template-columns:50px 1fr 90px 70px 70px 70px 60px 70px !important}
+  .ranking-row{grid-template-columns:50px 1fr 90px 70px 70px 70px 60px 70px !important}
+  .players-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+}
 </style>
 </head>
 <body>
@@ -729,6 +904,30 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font
     <div id="profile-body"></div>
   </div>
 </div>
+
+<!-- BOTTOM NAV MOBILE -->
+<nav id="bottom-nav">
+  <button class="bn-item active" id="bn-ranking" onclick="bnNav('ranking')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 6L21 6M8 12l13 0M8 18l13 0M3 6h.01M3 12h.01M3 18h.01"/></svg>
+    Ranking
+  </button>
+  <button class="bn-item" id="bn-players" onclick="bnNav('players')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.58-7 8-7s8 3 8 7"/></svg>
+    Jogadores
+  </button>
+  <button class="bn-item" id="bn-tournaments" onclick="bnNav('tournaments')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+    Torneios
+  </button>
+  <button class="bn-item" id="bn-categories" onclick="bnNav('categories')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    Cats
+  </button>
+  <button class="bn-item" id="bn-more" onclick="bnNav('more')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+    Mais
+  </button>
+</nav>
 
 <div id="loading-overlay" style="position:fixed;inset:0;z-index:9000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .3s">
   <div style="width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite"></div>
@@ -1880,6 +2079,68 @@ document.querySelectorAll('.nav-item').forEach(n=>{
   if(oc.includes("nav('categories')"))  n.id='nav-categories';
   if(oc.includes("nav('season')"))      n.id='nav-season';
 });
+
+// ══════════════════════════════════════════════════════════════
+//  BOTTOM NAV MOBILE
+// ══════════════════════════════════════════════════════════════
+function bnNav(view){
+  // atualiza estado ativo
+  document.querySelectorAll('.bn-item').forEach(b=>b.classList.remove('active'));
+  const btn = document.getElementById('bn-'+view);
+  if(btn) btn.classList.add('active');
+
+  if(view==='ranking'){
+    navRanking('absoluto');
+  } else if(view==='more'){
+    // abre mini-menu "Mais"
+    toggleMoreMenu();
+  } else {
+    nav(view);
+  }
+}
+
+// Sincroniza bottom nav quando sidebar é usada no desktop
+const _origNav = nav;
+function nav(view){
+  _origNav(view);
+  const map={players:'bn-players',tournaments:'bn-tournaments',categories:'bn-categories',season:null};
+  document.querySelectorAll('.bn-item').forEach(b=>b.classList.remove('active'));
+  const bid=map[view];
+  if(bid) document.getElementById(bid)?.classList.add('active');
+}
+
+// Menu "Mais" para Season e Novo Jogador no mobile
+let moreMenuOpen = false;
+function toggleMoreMenu(){
+  let menu = document.getElementById('more-menu');
+  if(menu){ menu.remove(); moreMenuOpen=false; return; }
+  moreMenuOpen = true;
+  menu = document.createElement('div');
+  menu.id = 'more-menu';
+  menu.style.cssText = 'position:fixed;bottom:calc(58px + 8px);right:8px;left:8px;background:var(--bg2);border:1px solid var(--border);border-radius:16px 16px 8px 8px;z-index:400;overflow:hidden;animation:mIn .2s ease';
+  menu.innerHTML = `
+    <div style="padding:14px 18px;border-bottom:1px solid var(--border);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)">Mais opções</div>
+    <button onclick="document.getElementById('more-menu')?.remove();openModal('modal-new-player')" style="width:100%;display:flex;align-items:center;gap:12px;padding:14px 18px;background:none;border:none;border-bottom:1px solid var(--border);cursor:pointer;color:var(--text);font-family:var(--font);font-size:14px;font-weight:600">
+      <span style="font-size:18px">➕</span> Novo Jogador
+    </button>
+    <button onclick="document.getElementById('more-menu')?.remove();nav('season')" style="width:100%;display:flex;align-items:center;gap:12px;padding:14px 18px;background:none;border:none;border-bottom:1px solid var(--border);cursor:pointer;color:var(--text);font-family:var(--font);font-size:14px;font-weight:600">
+      <span style="font-size:18px">📅</span> Temporada
+    </button>
+    <button onclick="document.getElementById('more-menu')?.remove();openModal('modal-new-tournament')" style="width:100%;display:flex;align-items:center;gap:12px;padding:14px 18px;background:none;border:none;cursor:pointer;color:var(--text);font-family:var(--font);font-size:14px;font-weight:600">
+      <span style="font-size:18px">🏆</span> Novo Torneio
+    </button>
+  `;
+  document.body.appendChild(menu);
+  // fecha ao clicar fora
+  setTimeout(()=>{
+    document.addEventListener('click', function closer(e){
+      if(!menu.contains(e.target) && e.target.id!=='bn-more'){
+        menu.remove(); moreMenuOpen=false;
+        document.removeEventListener('click', closer);
+      }
+    });
+  }, 100);
+}
 
 loadAll();
 </script>
