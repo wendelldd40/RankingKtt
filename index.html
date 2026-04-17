@@ -654,17 +654,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font
 
   <div class="sb-section" style="padding-bottom:0">
     <div class="sb-label">Gestão</div>
-    <button class="nav-item" onclick="nav('players')">
+    <button class="nav-item" id="nav-players" onclick="nav('players')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.58-7 8-7s8 3 8 7"/></svg>
       Jogadores
       <span class="nav-badge" id="badge-players">0</span>
     </button>
-    <button class="nav-item" onclick="nav('tournaments')">
+    <button class="nav-item" id="nav-tournaments" onclick="nav('tournaments')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
       Torneios
       <span class="nav-badge" id="badge-tournaments">0</span>
     </button>
-    <button class="nav-item" onclick="nav('categories')">
+    <button class="nav-item" id="nav-categories" onclick="nav('categories')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
       Categorias
       <span class="nav-badge" id="badge-categories">0</span>
@@ -673,7 +673,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg>
       Placar ao Vivo
     </button>
-    <button class="nav-item" onclick="nav('season')">
+    <button class="nav-item" id="nav-season" onclick="nav('season')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
       Temporada
     </button>
@@ -1321,7 +1321,7 @@ function nav(view){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const el = document.getElementById('view-'+view);
   if(el) el.classList.add('active');
-  const navMap = {players:'nav-players',tournaments:'nav-tournaments',categories:'nav-categories',season:'nav-season'};
+  const navMap = {players:'nav-players',tournaments:'nav-tournaments',categories:'nav-categories',season:'nav-season',placar:'nav-placar'};
   const navEl = document.getElementById(navMap[view]);
   if(navEl) navEl.classList.add('active');
   if(view==='players')     renderPlayers();
@@ -1360,7 +1360,9 @@ function openModal(id){
   if(id==='modal-new-tournament') prepNewTournamentModal();
   if(id==='modal-new-category')  prepNewCategoryModal();
   if(id==='modal-new-ranking')   prepNewRankingModal();
-  document.getElementById(id).classList.add('open');
+  if(id==='modal-nova-partida')  prepModalNovaPartida();
+  const el = document.getElementById(id);
+  if(el) el.classList.add('open');
 }
 function closeModal(id){
   document.getElementById(id).classList.remove('open');
@@ -2316,13 +2318,7 @@ function exportRanking(mode){
 // ══════════════════════════════════════════════════════════════
 //  FIX NAV IDS + INIT
 // ══════════════════════════════════════════════════════════════
-document.querySelectorAll('.nav-item').forEach(n=>{
-  const oc=n.getAttribute('onclick')||'';
-  if(oc.includes("nav('players')"))     n.id='nav-players';
-  if(oc.includes("nav('tournaments')")) n.id='nav-tournaments';
-  if(oc.includes("nav('categories')"))  n.id='nav-categories';
-  if(oc.includes("nav('season')"))      n.id='nav-season';
-});
+// nav IDs already set in HTML
 
 
 // ══════════════════════════════════════════════════════════════
@@ -2648,12 +2644,7 @@ function iniciarPartidaAoVivo(){
   toast('Partida iniciada ao vivo! 🏓','success');
 }
 
-// Abre modal preparando os selects
-const _origOpenModal = openModal;
-function openModal(id){
-  if(id==='modal-nova-partida') prepModalNovaPartida();
-  _origOpenModal(id);
-}
+// prepModalNovaPartida é chamado dentro da openModal original abaixo (já consolidado)
 // Expõe populateMatchSelect para o select inline
 document.addEventListener('change', e=>{
   if(e.target.id==='np-torneio-id') populateMatchSelect();
@@ -2678,7 +2669,7 @@ function bnNav(view){
   }
 }
 
-// Bottom nav sync — chamado pela nav() original já atualizada abaixo
+
 
 // Menu "Mais" para Season e Novo Jogador no mobile
 let moreMenuOpen = false;
